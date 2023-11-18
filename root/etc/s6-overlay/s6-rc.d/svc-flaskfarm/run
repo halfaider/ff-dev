@@ -1,0 +1,47 @@
+#!/usr/bin/with-contenv bash
+
+# 레디스 서버 시작
+/etc/init.d/redis-server restart
+
+if [[ "$(jq -r .dev ${FLASKFARM_DATA}/config.json)" == "true" ]]; then
+    echo "Dev. mode..."
+    while true;
+    do
+        sleep 1
+    done
+else
+    source "${FLASKFARM_VENV}/bin/activate"
+    cd "${FLASKFARM_SRC}/flaskfarm"
+
+    # flaskfarm 실행
+    COUNT=0
+    while true;
+    do
+        # celery multi 로 deamonize 를 하면 monkey.patch_all() 관련해서 subprocess의 'NoneType' object has no attribute 'fork_exec'" 에러 발생
+        celery \
+            -A main.celery \
+            worker \
+            --loglevel=info \
+            --pool=gevent \
+            --concurrency=2 \
+            --uid ${PUID} \
+            --gid ${PGID} \
+            --config_filepath="${FLASKFARM_CONFIG}" \
+            --running_type=${FLASKFARM_RUNNING_TYPE} &
+        python \
+            main.py \
+            --repeat ${COUNT} \
+            --config "${FLASKFARM_CONFIG}"
+        RESULT=$?
+        echo "PYTHON EXIT CODE : ${RESULT}.............."
+        # celery 프로세스 중지
+        ps auxww | grep 'main.celery worker' | awk '{print $2}' | xargs kill -9 > /dev/null 2>&1
+        if [ "$RESULT" = "1" ]; then
+            echo 'REPEAT....'
+        else
+            echo 'FINISH....'
+            break
+        fi
+        COUNT=`expr $COUNT + 1`
+    done
+fi

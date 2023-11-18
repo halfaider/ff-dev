@@ -1,0 +1,11 @@
+python3.10
+python3-pip
+virtualenv
+redis-server
+git
+net-tools
+ffmpeg
+fuse3
+aria2
+unzip
+mkvtoolnix

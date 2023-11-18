@@ -1,0 +1,36 @@
+version: "3.7"
+
+networks:
+  backend:
+    external: true
+
+volumes:
+  oracle_libpms:
+    external: true
+
+services:
+  ff-dev:
+    build:
+      context: .
+    image: ff-dev
+    container_name: ff-dev
+    hostname: ff-dev.oracle
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-file: "5"
+        max-size: 10m
+    volumes:
+      - ${VOL_DIR}/flaskfarm/data-dev:/data
+      - oracle_libpms:/usr/lib/plexmediaserver
+      - ${VOL_DIR}/plex/config/Library:/plex/Library
+      - ${VOL_CLOUD}/sjva:${VOL_CLOUD}/sjva:rshared
+      - ${VOL_CLOUD}/driven:${VOL_CLOUD}/driven:rshared
+      - ${VOL_CLOUD}/pikpak:${VOL_CLOUD}/pikpak:rshared
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: Asia/Seoul
+    networks: [backend]
+    ports: [9999:9999]

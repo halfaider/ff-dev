@@ -1,0 +1,67 @@
+{
+	"folders": [
+		{
+			"path": "/data"
+		},
+		{
+			"path": "/home"
+		},
+		{
+			"path": "/mnt"
+		},
+		{
+			"path": "/var"
+		},
+		{
+			"path": "/etc"
+		}
+	],
+	"settings":
+        {
+            "files.exclude": {
+                "/mnt/**": true
+            },
+            "python.testing.pytestArgs": [
+                "."
+            ],
+            "python.testing.unittestEnabled": false,
+            "python.testing.pytestEnabled": true,
+            "python.analysis.typeCheckingMode": "off",
+            "python.languageServer": "Pylance",
+            "python.analysis.extraPaths": [
+                "/data/src/flaskfarm/lib",
+                "/data/venv/lib/"
+            ],
+            "python.analysis.autoImportCompletions": true,
+            "python.analysis.include": [
+                "/data/src/**",
+                "/data/plugins/**"
+            ]
+        },
+        "launch": {
+            "version": "0.2.0",
+            "configurations": [
+                {
+                    "name": "Flaskfarm",
+                    "type": "python",
+                    "request": "launch",
+                    "program": "/data/src/flaskfarm/main.py",
+                    "python": "/data/venv/bin/python",
+                    "cwd": "/data/src/flaskfarm",
+                    "env": {
+                        "FLASK_DEBUG": "0",
+                        "GEVENT_SUPPORT": "True",
+                        "C_FORCE_ROOT": "True"
+                    },
+                    "args": ["--config", "/data/config.yaml"],
+                    "jinja": true,
+                    "justMyCode": true,
+                    "gevent": true,
+                    "autoReload": {
+                        "enable": true
+                    }
+                }
+            ]
+        }
+
+}

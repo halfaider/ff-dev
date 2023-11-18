@@ -1,0 +1,66 @@
+#!/usr/bin/with-contenv bash
+
+echo ""
+echo "***** copy files *****"
+echo ""
+[[ ! -e "${FLASKFARM_CONFIG}" ]] && {
+    cp /etc/flaskfarm/config.yaml "${FLASKFARM_CONFIG}" && \
+    chown abc:abc "${FLASKFARM_CONFIG}"
+}
+[[ ! -e "${FLASKFARM_DATA}/config.json" ]] && {
+    cp /etc/flaskfarm/config.json "${FLASKFARM_DATA}/config.json" && \
+    chown abc:abc "${FLASKFARM_DATA}/config.json"
+}
+[[ ! -e "${FLASKFARM_DATA}/flaskfarm.code-workspace" ]] && {
+    cp /etc/flaskfarm/flaskfarm.code-workspace "${FLASKFARM_DATA}/flaskfarm.code-workspace" && \
+    chown abc:abc "${FLASKFARM_DATA}/flaskfarm.code-workspace"
+}
+[[ ! -e "${FLASKFARM_DATA}/requirements.apt.txt" ]] && {
+    cp /etc/flaskfarm/requirements.apt.txt "${FLASKFARM_DATA}/requirements.apt.txt" && \
+    chown abc:abc "${FLASKFARM_DATA}/requirements.apt.txt"
+}
+[[ ! -e "${FLASKFARM_DATA}/requirements.pip.txt" ]] && {
+    cp /etc/flaskfarm/requirements.pip.txt "${FLASKFARM_DATA}/requirements.pip.txt" && \
+    chown abc:abc "${FLASKFARM_DATA}/requirements.pip.txt"
+}
+
+echo ""
+echo "***** install runtime packages *****"
+echo ""
+APT_PKGS="$(<${FLASKFARM_DATA}/requirements.apt.txt)"
+apt-get update && apt-get install -y ${APT_PKGS[@]}
+
+echo ""
+echo "***** set python environment *****"
+echo ""
+# 파이썬 가상환경 생성 및 활성화
+virtualenv "${FLASKFARM_VENV}"
+source "${FLASKFARM_VENV}/bin/activate"
+
+echo ""
+echo "***** install python packages *****"
+echo ""
+PYTHON_PKGS="$(<${FLASKFARM_DATA}/requirements.pip.txt)"
+# 파이썬 패키지 설치
+python -m pip install ${PYTHON_PKGS}
+
+echo ""
+echo "***** clone flaskfarm *****"
+echo ""
+# flaskfarm 소스 설치
+if [[ -e "${FLASKFARM_SRC}/flaskfarm/.git" ]]; then
+    if [[ ! "$(jq -r .dev ${FLASKFARM_DATA}/config.json)" == "true" ]]; then
+        git -C ${FLASKFARM_SRC}/flaskfarm pull "${FLASKFARM_REPO}"
+    fi
+else
+    git clone "${FLASKFARM_REPO}" "${FLASKFARM_SRC}/flaskfarm"
+fi
+
+echo ""
+echo "***** cleanup *****"
+echo ""
+apt-get clean && \
+rm -rf \
+    /tmp/* \
+    /var/lib/apt/lists/* \
+    /var/tmp/*
