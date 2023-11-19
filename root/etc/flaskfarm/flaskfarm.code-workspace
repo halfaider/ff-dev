@@ -49,7 +49,7 @@
                     "python": "/data/venv/bin/python",
                     "cwd": "/data/src/flaskfarm",
                     "env": {
-                        "FLASK_DEBUG": "0",
+                        "FLASK_DEBUG": "1",
                         "GEVENT_SUPPORT": "True",
                         "C_FORCE_ROOT": "True"
                     },

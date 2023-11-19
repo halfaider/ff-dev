@@ -1,0 +1,62 @@
+#!/usr/bin/with-contenv bash
+
+set -e
+
+echo ""
+echo "***** start flaskfarm *****"
+echo ""
+
+/etc/init.d/redis-server restart
+
+run_celery(){
+    # celery multi 로 deamonize 를 하면 monkey.patch_all() 관련해서 subprocess의 'NoneType' object has no attribute 'fork_exec'" 에러 발생
+    celery \
+        -A main.celery \
+        worker \
+        --loglevel=info \
+        --pool=gevent \
+        --concurrency=2 \
+        --uid ${PUID} \
+        --gid ${PGID} \
+        --config_filepath="${FF_CONFIG}" \
+        --running_type=${FF_RUNNING_TYPE} &
+}
+
+run_flaskfarm(){
+    python \
+        main.py \
+        --repeat ${FF_RESTART_COUNT} \
+        --config "${FF_CONFIG}"
+}
+
+kill_celery(){
+    ps auxww | grep 'main.celery worker' | awk '{print $2}' | xargs kill -9 > /dev/null 2>&1 || true
+}
+
+down_service(){
+    kill_celery
+    count_restart
+    s6-svc -d /var/run/service/svc-flaskfarm
+}
+
+count_restart(){
+    FF_RESTART_COUNT=$((${FF_RESTART_COUNT}+1))
+    printf "${FF_RESTART_COUNT}" > /var/run/s6/container_environment/FF_RESTART_COUNT
+}
+
+if [[ "$(jq -r .FF_DEV ${FF_DATA}/config.json)" == "true" ]]; then
+    echo "DEV MODE..."
+    down_service
+else
+    source "${FF_VENV}/bin/activate"
+    cd "${FF_SRC}/flaskfarm"
+    run_celery
+    if run_flaskfarm; then
+        echo "FINISH..."
+        down_service
+    else
+        echo "RESTART..."
+        count_restart
+        kill_celery
+    fi
+fi
