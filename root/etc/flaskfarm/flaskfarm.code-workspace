@@ -30,7 +30,7 @@
             "python.languageServer": "Pylance",
             "python.analysis.extraPaths": [
                 "/data/src/flaskfarm/lib",
-                "/data/venv/lib/"
+                "/data/venv/lib/python3.10/site-packages"
             ],
             "python.analysis.autoImportCompletions": true,
             "python.analysis.include": [
