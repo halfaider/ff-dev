@@ -21,8 +21,12 @@ FF_CONFIG="$(jq -r .FF_CONFIG ${FF_DATA}/config.json)"
 printf "${FF_CONFIG}" > /var/run/s6/container_environment/FF_CONFIG
 FF_REQUIREMENTS_APT="$(jq -r .FF_REQUIREMENTS_APT[] ${FF_DATA}/config.json)"
 printf "${FF_REQUIREMENTS_APT}" > /var/run/s6/container_environment/FF_REQUIREMENTS_APT
+FF_REQUIREMENTS_APT_INSTALL="$(jq -r .FF_REQUIREMENTS_APT_INSTALL ${FF_DATA}/config.json)"
+printf "${FF_REQUIREMENTS_APT_INSTALL}" > /var/run/s6/container_environment/FF_REQUIREMENTS_APT_INSTALL
 FF_REQUIREMENTS_PIP="$(jq -r .FF_REQUIREMENTS_PIP[] ${FF_DATA}/config.json)"
 printf "${FF_REQUIREMENTS_PIP}" > /var/run/s6/container_environment/FF_REQUIREMENTS_PIP
+FF_REQUIREMENTS_PIP_INSTALL="$(jq -r .FF_REQUIREMENTS_PIP_INSTALL ${FF_DATA}/config.json)"
+printf "${FF_REQUIREMENTS_PIP_INSTALL}" > /var/run/s6/container_environment/FF_REQUIREMENTS_PIP_INSTALL
 FF_RUNNING_TYPE="$(jq -r .FF_RUNNING_TYPE ${FF_DATA}/config.json)"
 printf "${FF_RUNNING_TYPE}" > /var/run/s6/container_environment/FF_RUNNING_TYPE
 FF_RESTART_COUNT="0"

@@ -18,6 +18,7 @@
         "unzip",
         "mkvtoolnix"
     ],
+    "FF_REQUIREMENTS_APT_INSTALL": true,
     "FF_REQUIREMENTS_PIP": [
         "APScheduler",
         "celery",
@@ -45,5 +46,6 @@
         "telepot-mod",
         "Werkzeug<3.0",
         "xmltodict"
-    ]
+    ],
+    "FF_REQUIREMENTS_PIP_INSTALL": true
 }

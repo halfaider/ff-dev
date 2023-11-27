@@ -5,7 +5,7 @@ set -e
 echo ""
 echo "***** install runtime packages *****"
 echo ""
-apt-get update && apt-get install -y ${FF_REQUIREMENTS_APT}
+[ ${FF_REQUIREMENTS_APT_INSTALL} == true ] && apt-get update && apt-get install -y ${FF_REQUIREMENTS_APT}
 
 echo ""
 echo "***** set python virtual environment *****"
@@ -16,14 +16,15 @@ source "${FF_VENV}/bin/activate"
 echo ""
 echo "***** install python packages *****"
 echo ""
-python -m pip install ${FF_REQUIREMENTS_PIP}
+[ ${FF_REQUIREMENTS_PIP_INSTALL} == true ] && python -m pip install ${FF_REQUIREMENTS_PIP}
 
 echo ""
 echo "***** clone flaskfarm *****"
 echo ""
 # flaskfarm 소스 설치
 if [[ -e "${FF_SRC}/flaskfarm/.git" ]]; then
-    if [[ ! "$(jq -r .FF_DEV ${FF_DATA}/config.json)" == "true" ]]; then
+    # FF_DEV가 true가 아니면 pull로 소스 업데이트
+    if [[ ! "$(jq -r .FF_DEV ${FF_DATA}/config.json)" == true ]]; then
         git -C ${FF_SRC}/flaskfarm pull "${FF_REPO}"
     fi
 else

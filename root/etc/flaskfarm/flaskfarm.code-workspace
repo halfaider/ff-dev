@@ -36,7 +36,7 @@
             "python.analysis.include": [
                 "/data/src/**",
                 "/data/plugins/**"
-            ]
+            ],
         },
         "launch": {
             "version": "0.2.0",

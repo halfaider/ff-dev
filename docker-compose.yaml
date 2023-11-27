@@ -14,9 +14,8 @@ services:
         max-file: "5"
         max-size: 10m
     volumes:
-      - /${YOUR_FOLDER}/data-dev:/data
+      - ${YOUR_FOLDER}/flaskfarm/data-dev:/data
     environment:
       PUID: ${YOUR_PUID}
       PGID: ${YOUR_PGID}
       TZ: Asia/Seoul
-    ports: [9999:9999]
