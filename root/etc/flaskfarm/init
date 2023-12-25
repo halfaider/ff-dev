@@ -3,9 +3,20 @@
 set -e
 
 echo ""
+echo "***** set profile *****"
+echo ""
+[[ ! -e "/etc/profile.d/99-ff-profile.sh" ]] && {
+    ln -s ${FF_DATA}/99-ff-profile.sh /etc/profile.d/99-ff-profile.sh
+}
+
+source /etc/profile.d/99-ff-profile.sh
+FF_RESTART_COUNT=0
+printf "${FF_RESTART_COUNT}" > /var/run/s6/container_environment/FF_RESTART_COUNT
+
+echo ""
 echo "***** install runtime packages *****"
 echo ""
-[ ${FF_REQUIREMENTS_APT_INSTALL} == true ] && apt-get update && apt-get install -y ${FF_REQUIREMENTS_APT}
+[ ${FF_REQUIREMENTS_APT_INSTALL:-true} == true ] && apt-get update && apt-get install -y ${FF_REQUIREMENTS_APT_LIST}
 
 echo ""
 echo "***** set python virtual environment *****"
@@ -16,15 +27,15 @@ source "${FF_VENV}/bin/activate"
 echo ""
 echo "***** install python packages *****"
 echo ""
-[ ${FF_REQUIREMENTS_PIP_INSTALL} == true ] && python -m pip install ${FF_REQUIREMENTS_PIP}
+[ ${FF_REQUIREMENTS_PIP_INSTALL:-true} == true ] && python -m pip install ${FF_REQUIREMENTS_PIP_LIST}
 
 echo ""
 echo "***** clone flaskfarm *****"
 echo ""
 # flaskfarm 소스 설치
 if [[ -e "${FF_SRC}/flaskfarm/.git" ]]; then
-    # FF_DEV가 true가 아니면 pull로 소스 업데이트
-    if [[ ! "$(jq -r .FF_DEV ${FF_DATA}/config.json)" == true ]]; then
+    # config.yaml의 debug 옵션이 true 가 아니면 pull 로 소스 업데이트
+    if [[ ! ${FF_DEBUG:-false} == true ]]; then
         git -C ${FF_SRC}/flaskfarm pull "${FF_REPO}"
     fi
 else

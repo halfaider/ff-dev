@@ -14,54 +14,71 @@
 		},
 		{
 			"path": "/etc"
+		},
+        {
+			"path": "/root"
 		}
 	],
-	"settings":
-        {
-            "files.exclude": {
-                "/mnt/**": true
-            },
-            "python.testing.pytestArgs": [
-                "."
-            ],
-            "python.testing.unittestEnabled": false,
-            "python.testing.pytestEnabled": true,
-            "python.analysis.typeCheckingMode": "off",
-            "python.languageServer": "Pylance",
-            "python.analysis.extraPaths": [
-                "/data/src/flaskfarm/lib",
-                "/data/venv/lib/python3.10/site-packages"
-            ],
-            "python.analysis.autoImportCompletions": true,
-            "python.analysis.include": [
-                "/data/src/**",
-                "/data/plugins/**"
-            ],
+	"settings": {
+        "files.exclude": {
+            "/mnt/**": true
         },
-        "launch": {
-            "version": "0.2.0",
-            "configurations": [
-                {
-                    "name": "Flaskfarm",
-                    "type": "python",
-                    "request": "launch",
-                    "program": "/data/src/flaskfarm/main.py",
-                    "python": "/data/venv/bin/python",
-                    "cwd": "/data/src/flaskfarm",
-                    "env": {
-                        "FLASK_DEBUG": "1",
-                        "GEVENT_SUPPORT": "True",
-                        "C_FORCE_ROOT": "True"
-                    },
-                    "args": ["--config", "/data/config.yaml"],
-                    "jinja": true,
-                    "justMyCode": true,
-                    "gevent": true,
-                    "autoReload": {
-                        "enable": true
-                    }
+        "python.testing.pytestArgs": [
+            "."
+        ],
+        "python.testing.unittestEnabled": false,
+        "python.testing.pytestEnabled": true,
+        "python.analysis.typeCheckingMode": "off",
+        "python.languageServer": "Jedi",
+        "python.analysis.extraPaths": [
+            "${env:FF_DATA}/src/flaskfarm/lib",
+            "${env:FF_DATA}/venv/lib/python3.10/site-packages"
+        ],
+        "python.analysis.autoImportCompletions": false,
+        "python.analysis.include": [
+            "${env:FF_DATA}/src/**",
+            "${env:FF_DATA}/plugins/**"
+        ],
+    },
+    "launch": {
+        "version": "0.2.0",
+        "configurations": [
+            {
+                "name": "Flaskfarm",
+                "type": "python",
+                "request": "launch",
+                "program": "${env:FF_DATA}/src/flaskfarm/main.py",
+                // 파이썬 경로에 변수 사용 불가
+                "python": "/data/venv/bin/python",
+                "cwd": "${env:FF_DATA}/src/flaskfarm",
+                "env": {
+                    "FLASK_DEBUG": "1",
+                    "GEVENT_SUPPORT": "True",
+                    "C_FORCE_ROOT": "True",
+                },
+                "args": ["--config", "${env:FF_DATA}/config.yaml"],
+                "jinja": true,
+                "justMyCode": true,
+                "gevent": true,
+                "autoReload": {
+                    "enable": true
+                },
+                "preLaunchTask": "auto-port-forwarding",
+            }
+        ]
+    },
+    "tasks": {
+        "version": "2.0.0",
+        "tasks": [
+            {
+                "label": "auto-port-forwarding",
+                "type": "shell",
+                "command": "echo 'VSCODE auto port forwarding: http://localhost:${env:FF_PORT}'",
+                "group": "test",
+                "presentation": {
+                    "reveal": "silent"
                 }
-            ]
-        }
-
+            }
+        ]
+    }
 }

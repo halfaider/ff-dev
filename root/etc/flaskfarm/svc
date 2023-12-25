@@ -6,6 +6,10 @@ echo ""
 echo "***** start flaskfarm *****"
 echo ""
 
+source /etc/profile.d/99-ff-profile.sh
+
+echo "for VSCODE auto-port-forwarding: http://localhost:${FF_PORT}"
+
 /etc/init.d/redis-server restart
 
 run_celery(){
@@ -18,7 +22,7 @@ run_celery(){
         --concurrency=2 \
         --uid ${PUID} \
         --gid ${PGID} \
-        --config_filepath="${FF_CONFIG}" \
+        --config_filepath="${FF_DATA}/config.yaml" \
         --running_type=${FF_RUNNING_TYPE} &
 }
 
@@ -26,7 +30,7 @@ run_flaskfarm(){
     python \
         main.py \
         --repeat ${FF_RESTART_COUNT} \
-        --config "${FF_CONFIG}"
+        --config "${FF_DATA}/config.yaml"
 }
 
 kill_celery(){
@@ -44,7 +48,7 @@ count_restart(){
     printf "${FF_RESTART_COUNT}" > /var/run/s6/container_environment/FF_RESTART_COUNT
 }
 
-if [[ "$(jq -r .FF_DEV ${FF_DATA}/config.json)" == "true" ]]; then
+if [[ ${FF_DEBUG:-false} == true ]]; then
     echo "DEV MODE..."
     down_service
 else
