@@ -23,21 +23,10 @@
         "files.exclude": {
             "/mnt/**": true
         },
-        "python.testing.pytestArgs": [
-            "."
-        ],
-        "python.testing.unittestEnabled": false,
-        "python.testing.pytestEnabled": true,
-        "python.analysis.typeCheckingMode": "off",
-        "python.languageServer": "Jedi",
+        "python.languageServer": "Pylance",
         "python.analysis.extraPaths": [
-            "${env:FF_DATA}/src/flaskfarm/lib",
-            "${env:FF_DATA}/venv/lib/python3.10/site-packages"
-        ],
-        "python.analysis.autoImportCompletions": false,
-        "python.analysis.include": [
-            "${env:FF_DATA}/src/**",
-            "${env:FF_DATA}/plugins/**"
+            "/data/src/flaskfarm/lib",
+            "/data/venv/lib"
         ],
     },
     "launch": {
@@ -47,16 +36,14 @@
                 "name": "Flaskfarm",
                 "type": "python",
                 "request": "launch",
-                "program": "${env:FF_DATA}/src/flaskfarm/main.py",
-                // 파이썬 경로에 변수 사용 불가
+                "program": "/data/src/flaskfarm/main.py",
                 "python": "/data/venv/bin/python",
-                "cwd": "${env:FF_DATA}/src/flaskfarm",
+                "cwd": "/data/src/flaskfarm",
                 "env": {
                     "FLASK_DEBUG": "1",
-                    "GEVENT_SUPPORT": "True",
-                    "C_FORCE_ROOT": "True",
+                    "GEVENT_SUPPORT": "true",
                 },
-                "args": ["--config", "${env:FF_DATA}/config.yaml"],
+                "args": ["--config", "/data/config.yaml"],
                 "jinja": true,
                 "justMyCode": true,
                 "gevent": true,
