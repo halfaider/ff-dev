@@ -25,8 +25,10 @@
         },
         "python.languageServer": "Pylance",
         "python.analysis.extraPaths": [
+            "/data/venv/lib",
             "/data/src/flaskfarm/lib",
-            "/data/venv/lib"
+            "/data/src/flaskfarm/lib/support/libsc",
+            "/data/plugins",
         ],
     },
     "launch": {

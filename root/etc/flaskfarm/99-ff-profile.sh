@@ -33,6 +33,7 @@ gevent-websocket
 Jinja2
 json_fix
 lxml
+pillow
 psutil
 python-socketio<5.8.0
 pycryptodome
