@@ -19,7 +19,7 @@ vscode의 dev 컨테이너 접속 방식을 이용하여 flaskfarm을 디버깅�
 - `/data/config.yaml`: flaskfarm 설정 파일.
 - `/data/flaskfarm.code-workspace`: vscode 디버깅용 workspace.
 - `/data/init`: s6-overlay 초기화 단계에서 호출됨.
-- `/data/svc`: s6-overla의 서비스 실행 단계에서 호출됨.
+- `/data/svc`: s6-overlay 서비스 실행 단계에서 호출됨.
 
 ## 99-ff-profile.sh
 - `FF_DEBUG`: `config.yaml`의 `debug` 값이 `false`일 경우 컨테이너 시작시 flaskfarm이 서비스로 실행된다. `true`일 경우 flaskfarm이 서비스로 시작되지 않는다. (기본값: true)
