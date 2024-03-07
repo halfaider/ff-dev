@@ -23,11 +23,11 @@
         "files.exclude": {
             "/mnt/**": true
         },
+        "python.defaultInterpreterPath": "/data/venv/bin/python",
         "python.languageServer": "Pylance",
         "python.analysis.extraPaths": [
             "/data/venv/lib",
             "/data/src/flaskfarm/lib",
-            "/data/src/flaskfarm/lib/support/libsc",
             "/data/plugins",
         ],
     },
